@@ -3,7 +3,7 @@
 namespace Products.Data.Migrations
 {
     [Migration(1)]
-    internal class CreateProductTable : Migration 
+    public class CreateProductTable : Migration
     {
         public override void Up()
         {
