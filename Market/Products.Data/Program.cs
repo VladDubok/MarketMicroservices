@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using FluentMigrator.Runner;
-using FluentMigrator.Runner.Initialization;
-
 using Microsoft.Extensions.DependencyInjection;
 using Products.Data.Migrations;
 
@@ -51,9 +47,9 @@ namespace test
         {
             // Instantiate the runner
             var runner = serviceProvider.GetRequiredService<IMigrationRunner>();
-
+            
             // Execute the migrations
-            runner.MigrateUp();
+            runner.MigrateUp(1);
         }
     }
 }

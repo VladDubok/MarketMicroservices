@@ -1,4 +1,6 @@
-﻿using FluentMigrator;
+﻿using Common.Entities;
+using FluentMigrator;
+using FluentMigrator.SqlServer;
 
 namespace Products.Data.Migrations
 {
@@ -7,18 +9,23 @@ namespace Products.Data.Migrations
     {
         public override void Up()
         {
-            Create.Table("Products")
-                .WithColumn("Id").AsInt32().NotNullable().PrimaryKey().Identity()
-                .WithColumn("Name").AsString().NotNullable()
-                .WithColumn("Price").AsDouble().NotNullable()
-                .WithColumn("AmountLeft").AsDouble().NotNullable()
-                .WithColumn("UpdatedAt").AsDateTime().Nullable()
-                .WithColumn("CreatedAt").AsDateTime().NotNullable();
+            Create.Table(nameof(Products))
+                .WithColumn(nameof(Product.Id)).AsInt32().NotNullable().PrimaryKey().Identity()
+                .WithColumn(nameof(Product.Name)).AsString().NotNullable()
+                .WithColumn(nameof(Product.Price)).AsDouble().NotNullable()
+                .WithColumn(nameof(Product.AmountLeft)).AsDouble().NotNullable()
+                .WithColumn(nameof(Product.UpdatedAt)).AsDateTime().Nullable()
+                .WithColumn(nameof(Product.CreatedAt)).AsDateTime().NotNullable();
+
+            Insert.IntoTable(nameof(Products))
+                .Row(new { Name = "Name1", Price = 100, AmountLeft = 1, CreatedAt = DateTime.UtcNow }).WithIdentityInsert()
+                .Row(new { Name = "Name2", Price = 200, AmountLeft = 2, CreatedAt = DateTime.UtcNow }).WithIdentityInsert()
+                .Row(new { Name = "Name3", Price = 300, AmountLeft = 3, CreatedAt = DateTime.UtcNow }).WithIdentityInsert();
         }
 
         public override void Down()
         {
-            Delete.Table("Products");
+            Delete.Table(nameof(Products));
         }
     }
 }
