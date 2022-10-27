@@ -66,7 +66,6 @@ public class ProductsRepository : IProductsRepository
             set p.IsDeleted = true
             where p.Id = @id
         ";
-
         await _connection.ExecuteAsync(query, parameters);
     }
 }
