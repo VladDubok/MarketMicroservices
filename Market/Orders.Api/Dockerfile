@@ -2,21 +2,22 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+ARG APP_PORT
+EXPOSE ${APP_PORT}
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Market/Market.csproj", "Market/"]
-RUN dotnet restore "Market/Market.csproj"
+COPY ["Orders.Api/Orders.Api.csproj", "Orders.Api/"]
+RUN dotnet restore "Orders.Api/Orders.Api.csproj"
 COPY . .
-WORKDIR "/src/Market"
-RUN dotnet build "Market.csproj" -c Release -o /app/build
+WORKDIR "/src/Orders.Api"
+RUN dotnet build "Orders.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Market.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Orders.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Market.dll"]
+ENV ASPNETCORE_URLS "http://+:${APP_PORT}"
+ENTRYPOINT ["dotnet", "Orders.Api.dll"]

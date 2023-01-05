@@ -2,21 +2,22 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+ARG APP_PORT
+EXPOSE ${APP_PORT}
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Product.Api/Product.Api.csproj", "Product.Api/"]
-RUN dotnet restore "Product.Api/Product.Api.csproj"
+COPY ["Products.Api/Products.Api.csproj", "Products.Api/"]
+RUN dotnet restore "Products.Api/Products.Api.csproj"
 COPY . .
-WORKDIR "/src/Product.Api"
-RUN dotnet build "Product.Api.csproj" -c Release -o /app/build
+WORKDIR "/src/Products.Api"
+RUN dotnet build "Products.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Product.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Products.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Product.Api.dll"]
+ENV ASPNETCORE_URLS "http://+:${APP_PORT}"
+ENTRYPOINT ["dotnet", "Products.Api.dll"]

@@ -11,14 +11,14 @@ public class ProductsRepository : IProductsRepository
 
     public ProductsRepository(IOptions<DatabaseOptions> databaseOptions)
     {
-        _connection = new NpgsqlConnection(databaseOptions.Value.ConnectionString);
+        _connection = new NpgsqlConnection(databaseOptions.Value.DefaultConnection);
     }
 
     public async Task<Product> GetAsync(int id)
     {
         var parameters = new { id };
         var query = @"
-            select * from Products p
+            select * from ""Products"" p
             where p.Id = @id
         ";
         var product = await _connection.QueryFirstOrDefaultAsync<Product>(query, parameters);
@@ -29,7 +29,7 @@ public class ProductsRepository : IProductsRepository
     public async Task<Product[]> GetAllAsync()
     {
         var query = @"
-            select * from Products p
+            select * from ""Products""
         ";
         var product = await _connection.QueryAsync<Product>(query);
 
@@ -39,7 +39,7 @@ public class ProductsRepository : IProductsRepository
     public async Task AddAsync(Product product)
     {
         var query = @"
-            insert into Products(Name, Price, AmountLeft, CreatedAt)
+            insert into ""Products""(Name, Price, AmountLeft, CreatedAt)
             values
             (@Name, @Price, @AmountLeft, @CreatedAt)
         ";
@@ -49,7 +49,7 @@ public class ProductsRepository : IProductsRepository
     public async Task UpdateAsync(Product product)
     {
         var query = @"
-            update Products p
+            update ""Products"" p
             set p.Name = @Name,
                 p.Price = @Price,
                 p.AmountLeft = @AmountLeft,
@@ -62,7 +62,7 @@ public class ProductsRepository : IProductsRepository
     {
         var parameters = new { id };
         var query = @"
-            update Products p
+            update ""Products"" p
             set p.IsDeleted = true
             where p.Id = @id
         ";

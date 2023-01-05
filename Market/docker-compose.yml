@@ -1,0 +1,64 @@
+version: "3.7"
+
+services:
+  products_api:
+    build:  
+      args:
+        APP_PORT: 5001
+      context: .
+      dockerfile: ./Products.Api/Dockerfile
+    hostname: products
+    environment:
+        ASPNETCORE_URLS: http://+:5001
+        ASPNETCORE_ENVIRONMENT: Development
+    networks: 
+      - default
+
+  orders_api:
+    build: 
+      args:
+        APP_PORT: 5002
+      context: .
+      dockerfile: ./Orders.Api/Dockerfile
+    hostname: orders
+    environment:
+        ASPNETCORE_URLS: http://+:5002
+        ASPNETCORE_ENVIRONMENT: Development
+    networks: 
+      - default
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ./Gateway/Dockerfile
+    ports:
+      - 8080:8080 
+    networks:
+      - default
+    environment:
+        ASPNETCORE_URLS: http://+:8080
+        ASPNETCORE_ENVIRONMENT: Development
+    depends_on:
+      - products_api
+      - orders_api
+  
+  products_migrator:
+    build:
+       context: .
+       dockerfile: ./Products.Migrator/Dockerfile
+    depends_on:
+      - database
+    networks:
+      - default
+
+  database:
+    image: postgres
+    hostname: database
+    environment: 
+      POSTGRES_PASSWORD: 1337 
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge

@@ -1,0 +1,55 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "products",
+          "Port": 5001
+        }
+      ],
+      "UpstreamPathTemplate": "/products/{everything}",
+      "SwaggerKey": "products"
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "orders",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/orders/{everything}",
+      "SwaggerKey": "orders"
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "products",
+      "TakeServersFromDownstreamService": true,
+      "Config": [
+        {
+          "Name": "Products",
+          "Version": "v1",
+          "Url": "http://products:5001/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "orders",
+      "TakeServersFromDownstreamService": true,
+      "Config": [
+        {
+          "Name": "Orders",
+          "Version": "v1",
+          "Url": "http://orders:5002/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:8080"
+  }
+}
